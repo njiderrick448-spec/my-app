@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type Task = {
   id: number;
@@ -8,9 +8,44 @@ type Task = {
   completed: boolean;
 };
 
+const TASKS_STORAGE_KEY = "tasks";
+
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
+  const [hasLoadedTasks, setHasLoadedTasks] = useState(false);
+
+  useEffect(() => {
+    let loadedTasks: Task[] = [];
+
+    try {
+      const savedTasks = window.localStorage.getItem(TASKS_STORAGE_KEY);
+      if (savedTasks) {
+        const parsedTasks: unknown = JSON.parse(savedTasks);
+        if (Array.isArray(parsedTasks)) {
+          loadedTasks = parsedTasks as Task[];
+        }
+      }
+    } catch {
+      loadedTasks = [];
+    }
+
+    queueMicrotask(() => {
+      setTasks(loadedTasks);
+      setHasLoadedTasks(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedTasks) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+    } catch {
+    }
+  }, [hasLoadedTasks, tasks]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
