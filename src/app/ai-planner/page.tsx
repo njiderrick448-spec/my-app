@@ -134,7 +134,7 @@ export default function AiPlannerPage() {
                   AI is organizing your day...
                 </>
               ) : (
-                <>{isOrganized ? "✨ Re-organize My Day" : "✨ Ask AI to Organize My Day"}</>
+                <>{isOrganized ? "Re-organize My Day" : "Ask AI to Organize My Day"}</>
               )}
             </button>
             <p className="mt-3 text-center text-xs text-gray-500">
@@ -211,7 +211,7 @@ export default function AiPlannerPage() {
                 <div className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5 shadow-xl shadow-blue-900/5 sm:-mr-10 sm:translate-x-6">
                   <div className="flex gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0061E0] text-lg text-white">
-                      ✨
+                      N
                     </div>
                     <div>
                       <p className="text-lg font-semibold text-blue-900">Your day, upgraded.</p>
