@@ -156,7 +156,7 @@ export default function AiPlannerPage() {
                 <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-[#F3F4F6] text-3xl">
                   ✦
                 </div>
-                <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-gray-500">
+                <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] texta-gray-500">
                   Step 02
                 </p>
                 <h2 className="text-2xl font-medium text-gray-900">
@@ -208,22 +208,6 @@ export default function AiPlannerPage() {
                   ))}
                 </div>
 
-                <div className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5 shadow-xl shadow-blue-900/5 sm:-mr-10 sm:translate-x-6">
-                  <div className="flex gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0061E0] text-lg text-white">
-                      N
-                    </div>
-                    <div>
-                      <p className="text-lg font-semibold text-blue-900">Your day, upgraded.</p>
-                      <p className="mt-2 text-sm leading-6 text-blue-800/70">
-                        AI just saved you 45 minutes of planning. Unlock unlimited weekly AI scheduling for <strong className="font-semibold text-blue-900">$2.99/mo!</strong>
-                      </p>
-                      <button type="button" className="mt-4 rounded-lg bg-[#0061E0] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#004FBA] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-2 focus:ring-offset-blue-50">
-                        Unlock Pro
-                      </button>
-                    </div>
-                  </div>
-                </div>
               </>
             )}
           </section>

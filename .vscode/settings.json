@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^npx eslint app/page\\.tsx src/app/ai-planner/page\\.tsx$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
