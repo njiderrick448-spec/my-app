@@ -12,7 +12,7 @@ const navigationItems: Array<{ key: AppNavKey; icon: string; label: string; href
 
 export function AppBottomNav({ active }: { active: AppNavKey }) {
   return (
-    <nav className="absolute bottom-5 left-5 right-5 z-20 grid grid-cols-5 border-t border-white/5 bg-[#070516]/90 pt-3 text-center" aria-label="Primary navigation">
+    <nav className="app-bottom-nav absolute bottom-5 left-5 right-5 z-20 grid grid-cols-5 border-t border-white/5 bg-[#070516]/90 pt-3 text-center lg:hidden" aria-label="Primary navigation">
       {navigationItems.map((item) => (
         <Link key={item.key} href={item.href} aria-current={item.key === active ? "page" : undefined} className={`text-[8px] transition ${item.key === active ? "text-[#00c7e5]" : "text-white/40 hover:text-white/75"}`}>
           <span className="block text-[15px] leading-none">{item.icon}</span>

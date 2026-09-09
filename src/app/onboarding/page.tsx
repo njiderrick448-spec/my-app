@@ -16,15 +16,37 @@ function NexusMark() {
 
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-[280px] shrink-0 rounded-[31px] border border-white/10 bg-[#050313] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.38)] sm:w-[300px]">
-      <div className="relative min-h-[610px] overflow-hidden rounded-[24px] bg-[#070516] px-5 pb-5 pt-4 text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_37%,rgba(81,48,191,0.33),transparent_35%),radial-gradient(circle_at_0%_25%,rgba(0,190,226,0.18),transparent_28%)]" />
-        <div className="relative z-10 flex items-center justify-between text-[9px] font-semibold text-white/75">
-          <span>9:41</span>
-          <span className="tracking-[0.16em]">||| &bull; =</span>
+    <div className="-mx-4 -my-8 flex min-h-screen w-[calc(100%+2rem)] bg-[#070516] text-white sm:-mx-4">
+      <aside className="hidden w-64 shrink-0 border-r border-white/10 bg-[#09071b] px-5 py-7 lg:flex lg:flex-col">
+        <Link href="/home-dashboard" className="flex items-center gap-3">
+          <NexusMark />
+          <span className="text-lg font-black tracking-tight">NEXUS</span>
+        </Link>
+        <p className="mt-12 text-[10px] font-bold uppercase tracking-[0.2em] text-white/35">Workspace</p>
+        <nav className="mt-4 space-y-1" aria-label="Workspace navigation">
+          {[
+            ["⌂", "Home", "/home-dashboard"],
+            ["≡", "Tasks", "/tasks-inbox"],
+            ["◷", "Focus", "/focus-home"],
+            ["✣", "AI", "/ai-chat"],
+            ["♙", "Profile", "/profile"],
+          ].map(([icon, label, href]) => (
+            <Link key={label} href={href} className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-white/55 transition hover:bg-white/5 hover:text-white">
+              <span className="w-5 text-center text-base text-[#00c7e5]">{icon}</span>
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <div className="mt-auto rounded-2xl border border-white/10 bg-[#110d28] p-4">
+          <p className="text-xs font-semibold">Alex Rivera</p>
+          <p className="mt-1 text-[10px] text-white/40">alex@nexus.ai</p>
+          <Link href="/settings" className="mt-4 block text-xs text-[#00c7e5]">Settings</Link>
         </div>
-        {children}
-        <div className="absolute bottom-3 left-1/2 h-1 w-14 -translate-x-1/2 rounded-full bg-white/35" />
+      </aside>
+      <div className="relative min-w-0 flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_0%,rgba(81,48,191,0.2),transparent_38%),#070516]">
+        <div className="relative mx-auto min-h-screen w-full max-w-[1440px] px-5 pb-24 pt-6 text-white sm:px-8 lg:px-12 lg:pb-12 lg:pt-10">
+          {children}
+        </div>
       </div>
     </div>
   );
