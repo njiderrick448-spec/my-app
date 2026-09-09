@@ -1,0 +1,1 @@
+export { default } from "@/src/app/ai-daily-briefing/page";

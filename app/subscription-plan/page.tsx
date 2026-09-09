@@ -1,0 +1,1 @@
+export { default } from "@/src/app/subscription-plan/page";

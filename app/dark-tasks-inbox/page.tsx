@@ -1,0 +1,1 @@
+export { default } from "@/src/app/dark-tasks-inbox/page";

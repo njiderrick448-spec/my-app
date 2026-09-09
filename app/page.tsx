@@ -28,7 +28,7 @@ export default function HomePage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
-  function submitPrompt(event: FormEvent<HTMLFormElement>) {
+  async function submitPrompt(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedPrompt = prompt.trim();
 
@@ -43,18 +43,28 @@ export default function HomePage() {
     setPrompt("");
     setIsProcessing(true);
 
-    window.setTimeout(() => {
+    try {
+      const response = await fetch("/api/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [{ role: "user", content: trimmedPrompt }] }),
+      });
+      if (!response.ok) throw new Error("Assistant request failed");
+      const content = await response.text();
       setMessages((currentMessages) => [
         ...currentMessages,
         {
           id: Date.now() + 1,
           role: "assistant",
-          content: "I am ready to help with that. Tell me whether you want this saved as a note, task, or focus session.",
+          content: content || "I am ready to help with that.",
           action: "Agent response",
         },
       ]);
+    } catch {
+      setMessages((currentMessages) => [...currentMessages, { id: Date.now() + 1, role: "assistant", content: "The assistant is unavailable right now. Please try again.", action: "Request error" }]);
+    } finally {
       setIsProcessing(false);
-    }, 650);
+    }
   }
 
   function chooseQuickAction(action: (typeof quickActions)[number]) {
@@ -70,7 +80,7 @@ export default function HomePage() {
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Good morning, Alex</h1>
             <p className="mt-2 text-sm text-gray-600">Your day, organized around what matters.</p>
           </div>
-          <Link href="/Login" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-sm font-semibold text-gray-700 shadow-sm transition hover:border-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50" aria-label="Open profile">A</Link>
+          <Link href="/profile" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-sm font-semibold text-gray-700 shadow-sm transition hover:border-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50" aria-label="Open profile">A</Link>
         </header>
 
         <section className="relative overflow-hidden rounded-[2rem] border border-blue-200 bg-white/70 p-5 shadow-xl shadow-blue-900/5 backdrop-blur-[12px] sm:p-8" aria-labelledby="assistant-heading">
@@ -101,7 +111,7 @@ export default function HomePage() {
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
           <section aria-labelledby="overview-heading"><div className="mb-4 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Today</p><h2 id="overview-heading" className="mt-1 text-xl font-semibold">Your overview</h2></div><span className="text-xs text-gray-500">Live summary</span></div><div className="grid grid-cols-3 gap-3"><div className="rounded-2xl border border-[#E5E7EB] bg-white/70 p-4 shadow-sm"><p className="text-2xl font-semibold text-gray-900">3</p><p className="mt-2 text-xs leading-5 text-gray-500">Tasks due today</p></div><div className="rounded-2xl border border-[#E5E7EB] bg-white/70 p-4 shadow-sm"><p className="text-2xl font-semibold text-gray-900">5</p><p className="mt-2 text-xs leading-5 text-gray-500">Notes created</p></div><div className="rounded-2xl border border-[#E5E7EB] bg-white/70 p-4 shadow-sm"><p className="text-2xl font-semibold text-gray-900">1h 20m</p><p className="mt-2 text-xs leading-5 text-gray-500">Focus time</p></div></div></section>
-          <section aria-labelledby="activity-heading"><div className="mb-4 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">History</p><h2 id="activity-heading" className="mt-1 text-xl font-semibold">Recent activity</h2></div><Link href="/tasks" className="text-xs font-semibold text-[#0061E0] hover:underline">View all</Link></div><div className="divide-y divide-[#E5E7EB] rounded-2xl border border-[#E5E7EB] bg-white/70 px-4 shadow-sm">{recentActivity.map((item) => <div key={item.title} className="flex items-center gap-3 py-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3F4F6] text-xs font-semibold text-[#0061E0]">{item.mark}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-gray-900">{item.title}</p><p className="mt-0.5 text-xs text-gray-500">{item.detail}</p></div><time className="shrink-0 text-xs text-gray-400">{item.time}</time></div>)}</div></section>
+          <section aria-labelledby="activity-heading"><div className="mb-4 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">History</p><h2 id="activity-heading" className="mt-1 text-xl font-semibold">Recent activity</h2></div><Link href="/tasks-inbox" className="text-xs font-semibold text-[#0061E0] hover:underline">View all</Link></div><div className="divide-y divide-[#E5E7EB] rounded-2xl border border-[#E5E7EB] bg-white/70 px-4 shadow-sm">{recentActivity.map((item) => <div key={item.title} className="flex items-center gap-3 py-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F3F4F6] text-xs font-semibold text-[#0061E0]">{item.mark}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-gray-900">{item.title}</p><p className="mt-0.5 text-xs text-gray-500">{item.detail}</p></div><time className="shrink-0 text-xs text-gray-400">{item.time}</time></div>)}</div></section>
   </div>
 +
       </div>

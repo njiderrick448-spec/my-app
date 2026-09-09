@@ -1,0 +1,1 @@
+export { default } from "@/src/app/dark-home-dashboard/page";
