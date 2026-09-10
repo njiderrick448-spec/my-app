@@ -1,17 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #111827;
-  --primary: #0061e0;
-  --primary-hover: #004fba;
-  --secondary: #f3f4f6;
-  --destructive: #dc2626;
-  --border-interactive: #9ca3af;
-  --border-structural: #e5e7eb;
-  --focus-ring: #3b82f6;
-  --glass-background: rgb(255 255 255 / 45%);
-  --glass-border: rgb(255 255 255 / 60%);
+  --background: #f5f8fc;
+  --foreground: #10233f;
+  --primary: #1664d8;
+  --primary-hover: #0d4fac;
+  --secondary: #eef3f9;
+  --destructive: #c0392b;
+  --border-interactive: #9cb2cb;
+  --border-structural: #dbe4ef;
+  --focus-ring: #5b9bea;
 }
 
 @theme inline {
@@ -25,4 +23,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
+}
+
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
 }

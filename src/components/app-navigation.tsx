@@ -3,7 +3,7 @@ import Link from "next/link";
 export type AppNavKey = "home" | "tasks" | "focus" | "ai" | "profile";
 
 const navigationItems: Array<{ key: AppNavKey; icon: string; label: string; href: string }> = [
-  { key: "home", icon: "⌂", label: "Home", href: "/home-dashboard" },
+  { key: "home", icon: "⌂", label: "Home", href: "/" },
   { key: "tasks", icon: "≡", label: "Tasks", href: "/tasks-inbox" },
   { key: "focus", icon: "◷", label: "Focus", href: "/focus-home" },
   { key: "ai", icon: "✣", label: "AI", href: "/ai-chat" },
