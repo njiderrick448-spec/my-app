@@ -4,7 +4,7 @@ type AppNavKey = "home" | "tasks" | "focus" | "ai" | "profile";
 
 const navigation = [
   { key: "home" as const, label: "Overview", href: "/", mark: "⌂" },
-  { key: "tasks" as const, label: "Tasks", href: "/tasks-inbox", mark: "✓" },
+  { key: "tasks" as const, label: "Tasks", href: "/tasks", mark: "✓" },
   { key: "focus" as const, label: "Focus", href: "/focus-home", mark: "◷" },
   { key: "ai" as const, label: "AI workspace", href: "/ai-chat", mark: "Z" },
   { key: "profile" as const, label: "Profile", href: "/profile", mark: "A" },

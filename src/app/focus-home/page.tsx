@@ -1,5 +1,5 @@
-import { FocusHomeScreen } from "@/src/app/focus-screens";
+import { FocusWorkspace } from "@/src/components/workspace-pages";
 
 export default function FocusHomePage() {
-  return <main className="flex min-h-screen items-center justify-center bg-[#f4f4f5] px-4 py-8"><FocusHomeScreen /></main>;
+  return <FocusWorkspace />;
 }
