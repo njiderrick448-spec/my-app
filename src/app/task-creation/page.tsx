@@ -1,5 +1,5 @@
-import { TaskCreationScreen } from "@/src/app/task-screens";
+import { TaskCreationWorkspace } from "@/src/components/workspace-pages";
 
 export default function TaskCreationPage() {
-  return <main className="flex min-h-screen items-center justify-center bg-[#f4f4f5] px-4 py-8"><TaskCreationScreen /></main>;
+  return <TaskCreationWorkspace />;
 }
