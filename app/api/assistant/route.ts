@@ -1,5 +1,14 @@
 import { openai } from "@ai-sdk/openai";
-import { stepCountIs, streamText } from "ai";
+import { convertToModelMessages, stepCountIs, streamText, tool } from "ai";
+import { z } from "zod";
+import { createClient } from "@/src/lib/supabase/server";
+
+const taskInput = z.object({
+  title: z.string().min(1).max(160),
+  description: z.string().max(2000).optional(),
+  dueDate: z.string().nullable().optional(),
+  priority: z.enum(["low", "medium", "high"]).default("medium"),
+});
 
 export async function POST(req: Request) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -23,6 +32,58 @@ export async function POST(req: Request) {
     focusSessions = [],
     calendarEvents = [],
   } = payload;
+
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  const userId = authData.user?.id;
+
+  const tools = {
+    listTasks: tool({
+      description: "List the signed-in user's current tasks, newest first.",
+      inputSchema: z.object({
+        status: z.enum(["all", "pending", "done"]).default("all"),
+      }),
+      execute: async ({ status }) => {
+        if (!userId) return { error: "The user is not signed in." };
+
+        let query = supabase
+          .from("tasks")
+          .select("id, title, description, due_date, priority, status")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(20);
+
+        if (status !== "all") query = query.eq("status", status);
+
+        const { data, error } = await query;
+        if (error) return { error: "Unable to read tasks right now." };
+        return { tasks: data ?? [] };
+      },
+    }),
+    createTask: tool({
+      description: "Create a task for the signed-in user after they ask for one.",
+      inputSchema: taskInput,
+      execute: async ({ title, description, dueDate, priority }) => {
+        if (!userId) return { error: "The user is not signed in." };
+
+        const { data, error } = await supabase
+          .from("tasks")
+          .insert({
+            user_id: userId,
+            title,
+            description: description ?? "",
+            due_date: dueDate ?? null,
+            priority,
+            status: "pending",
+          })
+          .select("id, title, description, due_date, priority, status")
+          .single();
+
+        if (error) return { error: "Unable to create that task right now." };
+        return { task: data };
+      },
+    }),
+  };
 
   const taskSummary = tasks.length
     ? tasks
@@ -64,6 +125,8 @@ export async function POST(req: Request) {
         .join("\n")
     : "- No calendar events yet";
 
+  const modelMessages = await convertToModelMessages(messages ?? [], { tools });
+
   const result = streamText({
     model: openai("gpt-4o-mini"),
     system: `
@@ -91,12 +154,16 @@ Your goals:
 - Keep responses concise and practical.
 - When there is a clear task or calendar need, propose a concrete next step.
 - Prefer action-oriented guidance with dates, priorities, and time blocks.
+- Use listTasks when the user asks about their current tasks or workload.
+- Use createTask when the user explicitly asks you to add a task. Never invent a task creation request.
+- After using a tool, clearly tell the user what you found or changed.
 
 Be concise and helpful.
 `,
-    messages,
+    messages: modelMessages,
+    tools,
     stopWhen: stepCountIs(5),
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
