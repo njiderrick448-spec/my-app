@@ -1,5 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PhoneFrame } from "@/src/app/onboarding/page";
 import { AppBottomNav } from "@/src/components/app-navigation";
+import { getDashboardSummary } from "@/src/lib/analytics";
 
 const buttonClassName = "rounded-lg bg-gradient-to-r from-[#4940ec] to-[#8c4eed] py-3 text-[10px] font-bold shadow-[0_7px_18px_rgba(100,71,238,0.3)]";
 
@@ -16,7 +20,38 @@ export function CompletionWelcomeScreen() {
 }
 
 export function HomeDashboardScreen({ evening = false }: { evening?: boolean }) {
-  return <PhoneFrame><div className="relative min-h-[555px] pb-20 pt-5"><div className="flex items-start justify-between"><div><h2 className="text-[16px] font-extrabold">Good {evening ? "evening" : "morning"}, Alex</h2><p className="mt-1 text-[8px] text-white/45">Thursday, Jan 29</p></div><ScorePill evening={evening} /></div>{evening ? <div className="mt-5 rounded-xl border border-[#8c50e8]/30 bg-[#392174]/75 p-3"><p className="text-[9px] font-bold">✣ DAILY REFLECTION</p><p className="mt-2 text-[9px] leading-[1.5] text-white/65">Take 2 minutes to summarize your wins and structure tomorrow&apos;s blueprint.</p><button type="button" className={`${buttonClassName} mt-3 w-24 py-2`}>Reflect Now</button></div> : <div className="mt-5 rounded-xl border border-white/5 bg-[#110d28] p-3 text-[8px] leading-[1.5] text-white/65">✣ &nbsp; Your AI assistant suggests focusing on <span className="text-[#00c7e5]">3 priority tasks</span> today before your 2:00 PM sync.</div>}<p className="mb-2 mt-5 text-[8px] font-bold uppercase text-white/50">{evening ? "Completed priorities" : "Today&apos;s priorities"}</p><div className="space-y-2">{evening ? <><Priority title="Review product spec document" time="9:30 AM" complete /><Priority title="Sync with design developers" time="11:00 AM" complete /><Priority title="Nexus app architecture draft" time="3:30 PM" complete /></> : <><Priority title="Review product spec document" time="9:30 AM" complete /><Priority title="Sync with design developers" time="11:00 AM" color="#8c50e8" /><Priority title="Nexus app architecture draft" time="3:30 PM" color="#8c50e8" /></>}</div><p className="mb-2 mt-5 text-[8px] font-bold uppercase text-white/50">Performance &amp; focus</p><div className="grid grid-cols-2 gap-2"><div className="flex h-20 flex-col items-center justify-center rounded-xl border border-white/5 bg-[#100b2b]"> <span className="text-[15px] text-[#00c7e5]">{evening ? "11/12" : "7/12"}</span><span className="mt-2 text-[7px] text-white/35">Tasks Completed</span></div><div className="space-y-2"><div className="rounded-lg border border-white/5 bg-[#100b2b] px-2 py-2 text-[8px]">◷ &nbsp; <b>{evening ? "4h 30m" : "2h 15m"}</b><span className="block pl-4 text-[7px] text-white/35">Focus Time Today</span></div><div className="rounded-lg border border-white/5 bg-[#100b2b] px-2 py-2 text-[8px]">♧ &nbsp; <b>12 Days</b><span className="block pl-4 text-[7px] text-white/35">Habit Streak</span></div></div></div><p className="mb-2 mt-5 text-[8px] font-bold uppercase text-white/50">Upcoming timeline</p><div className="rounded-lg border border-white/5 bg-[#100b2b] px-2 py-3 text-[8px] text-white/70"><span className="mr-2 rounded bg-[#27165b] px-1 py-1 text-[#8c50e8]">{evening ? "9:00 PM" : "2:00 PM"}</span>{evening ? "Daily retrospective review" : "Project alignment sync"}<span className="float-right">›</span></div><AppBottomNav active="home" /></div></PhoneFrame>;
+  const [summary, setSummary] = useState({
+    totalTasks: 0,
+    completedTasks: 0,
+    completionRate: 0,
+    focusMinutes: 0,
+    recentTasks: [] as Array<{ title: string; due_date: string | null; status: string | null; priority: string | null }>,
+    upcomingEvents: [] as Array<{ title: string; start: string | null; end: string | null }>,
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadData() {
+      const data = await getDashboardSummary();
+      if (!active) return;
+      setSummary(data);
+    }
+
+    loadData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const displayTasks = summary.recentTasks.length > 0 ? summary.recentTasks.slice(0, 3) : [
+    { title: "Review product spec document", due_date: "Today", status: "done", priority: "high" },
+    { title: "Sync with design developers", due_date: "Today", status: "pending", priority: "medium" },
+    { title: "Nexus app architecture draft", due_date: "Today", status: "pending", priority: "high" },
+  ];
+
+  return <PhoneFrame><div className="relative min-h-[555px] pb-20 pt-5"><div className="flex items-start justify-between"><div><h2 className="text-[16px] font-extrabold">Good {evening ? "evening" : "morning"}, Alex</h2><p className="mt-1 text-[8px] text-white/45">Thursday, Jan 29</p></div><ScorePill evening={evening} /></div>{evening ? <div className="mt-5 rounded-xl border border-[#8c50e8]/30 bg-[#392174]/75 p-3"><p className="text-[9px] font-bold">✣ DAILY REFLECTION</p><p className="mt-2 text-[9px] leading-[1.5] text-white/65">Take 2 minutes to summarize your wins and structure tomorrow&apos;s blueprint.</p><button type="button" className={`${buttonClassName} mt-3 w-24 py-2`}>Reflect Now</button></div> : <div className="mt-5 rounded-xl border border-white/5 bg-[#110d28] p-3 text-[8px] leading-[1.5] text-white/65">✣ &nbsp; Your AI assistant suggests focusing on <span className="text-[#00c7e5]">{Math.max(1, Math.round(summary.totalTasks / 2))} priority tasks</span> today before your next session.</div>}<p className="mb-2 mt-5 text-[8px] font-bold uppercase text-white/50">{evening ? "Completed priorities" : "Today&apos;s priorities"}</p><div className="space-y-2">{displayTasks.map((task, index) => <Priority key={`${task.title}-${index}`} title={task.title} time={task.due_date ?? "Today"} complete={task.status === "done"} color={task.priority === "high" ? "#ff385d" : task.priority === "medium" ? "#8c50e8" : "#00c7e5"} />)}</div><p className="mb-2 mt-5 text-[8px] font-bold uppercase text-white/50">Performance &amp; focus</p><div className="grid grid-cols-2 gap-2"><div className="flex h-20 flex-col items-center justify-center rounded-xl border border-white/5 bg-[#100b2b]"> <span className="text-[15px] text-[#00c7e5]">{summary.completedTasks}/{summary.totalTasks || 12}</span><span className="mt-2 text-[7px] text-white/35">Tasks Completed</span></div><div className="flex h-20 flex-col items-center justify-center rounded-xl border border-white/5 bg-[#100b2b]"> <span className="text-[15px] text-[#00c7e5]">{summary.completionRate}%</span><span className="mt-2 text-[7px] text-white/35">Focus Score</span></div></div><AppBottomNav active="home" /></div></PhoneFrame>;
 }
 
 export function TasksInboxScreen() {

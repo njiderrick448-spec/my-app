@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { AppShell } from "@/src/components/app-shell";
+import { getAssistantContext } from "@/src/lib/ai/context";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 const initialMessages: ChatMessage[] = [{ role: "assistant", content: "Hi Alex. I’m here to help you organize the day. Tell me what you’re working through, or ask me to turn an idea into a clear next step." }];
@@ -21,7 +22,19 @@ export default function AiChatPage() {
     setDraft("");
     setIsSending(true);
     try {
-      const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: nextMessages }) });
+        const context = await getAssistantContext();
+      const response = await fetch("/api/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: nextMessages,
+          profile: context.profile,
+          tasks: context.tasks,
+          goals: context.goals,
+          focusSessions: context.focusSessions,
+          calendarEvents: context.calendarEvents,
+        }),
+      });
       if (!response.ok) throw new Error("Assistant request failed");
       const reply = await response.text();
       setMessages((current) => [...current, { role: "assistant", content: reply || "I’m ready for the next step." }]);

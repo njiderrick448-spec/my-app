@@ -1,5 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PhoneFrame } from "@/src/app/onboarding/page";
 import { AppBackButton, AppBottomNav } from "@/src/components/app-navigation";
+import { getDashboardSummary } from "@/src/lib/analytics";
 
 const primaryButton = "rounded-lg bg-gradient-to-r from-[#4940ec] to-[#8c4eed] py-3 text-[10px] font-bold shadow-[0_7px_18px_rgba(100,71,238,0.3)]";
 
@@ -23,10 +27,28 @@ export function TaskCreationScreen() {
   return <PhoneFrame><div className="relative min-h-[555px] pb-20 pt-5"><BackHeader title="Create New Task" /><div className="mt-6 space-y-4"><Field label="Task title" value="Write marketing copy edits" /><Field label="Description" value="Draft a series of short benefit statements targeting our early signups..." tall /><div className="grid grid-cols-2 gap-4"><Field label="Due date" value="▣  Tomorrow" /><Field label="Time" value="◷ 10:00 AM" /></div><div><p className="mb-2 text-[7px] font-bold uppercase text-white/50">Priority</p><div className="flex gap-1.5 text-[8px]"><span className="rounded-full border border-[#ff9f18] bg-[#5d321d] px-2 py-1 text-[#ffb246]">● High</span><span className="rounded-full border border-white/10 px-2 py-1 text-white/55">● Medium</span><span className="rounded-full border border-white/10 px-2 py-1 text-white/55">● Low</span></div></div><div className="rounded-lg border border-[#9b60ff] bg-[#29165b]/50 p-2 text-[8px] text-white/70">✣ &nbsp; AI: Schedule for tomorrow morning based on your current workload patterns.</div></div><button type="button" className={`${primaryButton} absolute bottom-20 left-5 right-5`}>Create Task</button><TaskNav /></div></PhoneFrame>;
 }
 
-const calendarTasks = [["09:30 AM", "Refactor core layout system", "#ff536b"], ["11:00 AM", "Design review prep", "#ff9f18"], ["03:30 PM", "Nexus architecture sync", "#357cff"]] as const;
-
 export function TasksCalendarScreen() {
-  return <PhoneFrame><div className="relative min-h-[555px] pb-20 pt-5"><BackHeader title="Calendar" action="▣" /><p className="mt-6 text-[10px] font-bold">January 2026</p><div className="mt-4 grid grid-cols-7 text-center text-[7px] text-white/40">{["M", "T", "W", "T", "F", "S", "S"].map((day) => <span key={day}>{day}</span>)}</div><div className="mt-3 grid grid-cols-7 gap-y-3 text-center text-[8px] text-white/65">{["26", "27", "28", "29", "30", "31", "1"].map((day) => <span key={day} className={day === "29" ? "mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-[#00c7e5] font-bold text-[#06151d]" : ""}>{day}</span>)}</div><p className="mb-2 mt-6 text-[8px] font-bold uppercase text-white/50">Today&apos;s schedule</p><div className="space-y-2">{calendarTasks.map(([time, title, color]) => <div key={title} className="flex items-center gap-2"><span className="w-9 text-[7px] text-white/45">{time}</span><div className="flex flex-1 items-center gap-2 rounded-xl border border-white/5 bg-[#100b2b] px-2 py-2.5"><span className="h-3.5 w-3.5 rounded border border-white/20" /><div className="min-w-0 flex-1"><p className="truncate text-[9px] text-white/75">{title}</p><p className="text-[7px] text-white/35">Today &nbsp;•&nbsp; <span style={{ color }}>Work</span></p></div><span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} /></div></div>)}</div><TaskNav /></div></PhoneFrame>;
+  const [events, setEvents] = useState<Array<{ title: string; start: string | null; end: string | null }>>([]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadEvents() {
+      const summary = await getDashboardSummary();
+      if (!active) return;
+      setEvents(summary.upcomingEvents.length > 0 ? summary.upcomingEvents : [
+        { title: "Design review prep", start: "2026-01-29T11:00:00.000Z", end: "2026-01-29T12:00:00.000Z" },
+        { title: "Nexus architecture sync", start: "2026-01-29T15:30:00.000Z", end: "2026-01-29T16:30:00.000Z" },
+      ]);
+    }
+
+    loadEvents();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return <PhoneFrame><div className="relative min-h-[555px] pb-20 pt-5"><BackHeader title="Calendar" action="▣" /><p className="mt-6 text-[10px] font-bold">January 2026</p><div className="mt-4 grid grid-cols-7 text-center text-[7px] text-white/40">{["M", "T", "W", "T", "F", "S", "S"].map((day) => <span key={day}>{day}</span>)}</div><div className="mt-3 grid grid-cols-7 gap-y-3 text-center text-[8px] text-white/65">{["26", "27", "28", "29", "30", "31", "1"].map((day) => <span key={day} className={day === "29" ? "mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-[#00c7e5] font-bold text-[#06151d]" : ""}>{day}</span>)}</div><p className="mb-2 mt-6 text-[8px] font-bold uppercase text-white/50">Today&apos;s schedule</p><div className="space-y-2">{events.map((event, index) => { const start = event.start ? new Date(event.start) : new Date(); const end = event.end ? new Date(event.end) : new Date(start.getTime() + 60 * 60 * 1000); const time = `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`; const color = ["#ff536b", "#ff9f18", "#357cff"][index % 3]; return <div key={`${event.title}-${index}`} className="flex items-center gap-2"><span className="w-9 text-[7px] text-white/45">{time}</span><div className="flex flex-1 items-center gap-2 rounded-xl border border-white/5 bg-[#100b2b] px-2 py-2.5"><span className="h-3.5 w-3.5 rounded border border-white/20" /><div className="min-w-0 flex-1"><p className="truncate text-[9px] text-white/75">{event.title}</p><p className="text-[7px] text-white/35">Today &nbsp;•&nbsp; <span style={{ color }}>Work</span></p></div><span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} /></div></div>; })}</div><TaskNav /></div></PhoneFrame>;
 }
 
 const projects = [["Work", "12 tasks", "58% complete", "#00c7e5", "w-3/5"], ["Personal", "5 tasks", "40% complete", "#9b60ff", "w-2/5"], ["Health", "3 tasks", "80% complete", "#00e5a0", "w-4/5"], ["Learning", "8 tasks", "15% complete", "#ffb11b", "w-[15%]"], ["Side Project", "4 tasks", "0% complete", "#ff9f3f", "w-0"]] as const;

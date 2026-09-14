@@ -3,6 +3,8 @@
         "/^npx eslint app/page\\.tsx src/app/ai-planner/page\\.tsx$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "npm install": true,
+        "mv": true
     }
 }

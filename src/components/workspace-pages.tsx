@@ -3,8 +3,22 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { AppShell } from "@/src/components/app-shell";
+import {
+  createTask as createUserTask,
+  getProfile,
+  getTasks,
+  saveProfile as saveUserProfile,
+  toggleTask as toggleUserTask,
+} from "@/src/lib/supabase/data";
 
-type Task = { title: string; detail: string; tag: string; color: string; done: boolean };
+type Task = {
+  id?: string;
+  title: string;
+  detail: string;
+  tag: string;
+  color: string;
+  done: boolean;
+};
 
 const initialTasks: Task[] = [
   { title: "Review product spec document", detail: "Today at 9:30 AM", tag: "Work", color: "#1664d8", done: true },
