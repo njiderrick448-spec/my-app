@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { PhoneFrame } from "@/src/app/onboarding/page";
 import { AppBottomNav } from "@/src/components/app-navigation";
 import { getDashboardSummary } from "@/src/lib/analytics";
@@ -16,7 +17,7 @@ function Priority({ title, time, complete = false, color = "#00c7e5" }: { title:
 }
 
 export function CompletionWelcomeScreen() {
-  return <PhoneFrame><div className="relative flex min-h-[555px] flex-col items-center justify-end pb-10 text-center"><div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-full border-[3px] border-[#00c7e5] text-[19px] font-extrabold text-white shadow-[0_0_24px_rgba(0,199,229,0.2)]"><span className="absolute inset-2 rounded-full border border-[#8e52ff] border-l-transparent" />85%<small className="absolute bottom-5 text-[6px] font-bold text-[#00c7e5]">READY SCORE</small></div><h2 className="text-[18px] font-extrabold">You&apos;re All Set!</h2><p className="mt-3 max-w-[220px] text-[10px] leading-[1.55] text-white/50">Welcome to Nexus, Alex. We&apos;ve configured your daily framework to target <span className="text-[#00c7e5]">Productivity</span>, optimize <span className="text-[#00c7e5]">Habits</span>, and enhance <span className="text-[#00c7e5]">Focus</span>.</p><div className="mt-5 w-full rounded-lg border border-white/5 bg-[#110d28] px-3 py-2 text-left text-[8px] text-white/65">◉ &nbsp; Focus profiling initialized successfully.</div><button type="button" className={`${buttonClassName} mt-16 w-full`}>Start Using Nexus</button></div></PhoneFrame>;
+  return <PhoneFrame><div className="relative flex min-h-[555px] flex-col items-center justify-end pb-10 text-center"><div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-full border-[3px] border-[#00c7e5] text-[19px] font-extrabold text-white shadow-[0_0_24px_rgba(0,199,229,0.2)]"><span className="absolute inset-2 rounded-full border border-[#8e52ff] border-l-transparent" />85%<small className="absolute bottom-5 text-[6px] font-bold text-[#00c7e5]">READY SCORE</small></div><h2 className="text-[18px] font-extrabold">You&apos;re All Set!</h2><p className="mt-3 max-w-[220px] text-[10px] leading-[1.55] text-white/50">Welcome to Nexus, Alex. We&apos;ve configured your daily framework to target <span className="text-[#00c7e5]">Productivity</span>, optimize <span className="text-[#00c7e5]">Habits</span>, and enhance <span className="text-[#00c7e5]">Focus</span>.</p><div className="mt-5 w-full rounded-lg border border-white/5 bg-[#110d28] px-3 py-2 text-left text-[8px] text-white/65">◉ &nbsp; Focus profiling initialized successfully.</div><Link href="/home-dashboard" className={`${buttonClassName} mt-16 block w-full text-center`}>Start Using Nexus</Link></div></PhoneFrame>;
 }
 
 export function HomeDashboardScreen({ evening = false }: { evening?: boolean }) {
