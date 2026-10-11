@@ -1,6 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { convertToModelMessages, stepCountIs, streamText, tool } from "ai";
 import { z } from "zod";
+import { buildAgentSystemPrompt } from "@/src/lib/ai/agent";
 import { createClient } from "@/src/lib/supabase/server";
 
 const taskInput = z.object({
@@ -83,6 +84,26 @@ export async function POST(req: Request) {
         return { task: data };
       },
     }),
+    scheduleReminder: tool({
+      description: "Create a reminder or follow-up after the user explicitly approves it. This is safe because it requires confirmation before acting on the user's phone or device.",
+      inputSchema: z.object({
+        title: z.string().min(1).max(120),
+        when: z.string().min(1).max(120).optional(),
+        note: z.string().max(500).optional(),
+      }),
+      execute: async ({ title, when, note }) => {
+        return {
+          requiresApproval: true,
+          reminder: {
+            title,
+            when: when ?? "later today",
+            note: note ?? "",
+          },
+          message:
+            "This action needs explicit user approval and a trusted mobile companion app or permission flow before it can be executed on the device.",
+        };
+      },
+    }),
   };
 
   const taskSummary = tasks.length
@@ -129,37 +150,13 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai("gpt-4o-mini"),
-    system: `
-You are ZENVYX, an AI personal productivity assistant.
-
-User context:
-- Name: ${profile?.full_name ?? "Unknown user"}
-- Email: ${profile?.email ?? "Not provided"}
-
-Current tasks:
-${taskSummary}
-
-Current goals:
-${goalSummary}
-
-Focus sessions:
-${focusSummary}
-
-Calendar items:
-${calendarSummary}
-
-Your goals:
-- Help the user stay organized, focused, and productive.
-- Proactively suggest next actions when helpful.
-- Keep responses concise and practical.
-- When there is a clear task or calendar need, propose a concrete next step.
-- Prefer action-oriented guidance with dates, priorities, and time blocks.
-- Use listTasks when the user asks about their current tasks or workload.
-- Use createTask when the user explicitly asks you to add a task. Never invent a task creation request.
-- After using a tool, clearly tell the user what you found or changed.
-
-Be concise and helpful.
-`,
+    system: buildAgentSystemPrompt({
+      profile: profile ?? null,
+      taskSummary,
+      goalSummary,
+      focusSummary,
+      calendarSummary,
+    }),
     messages: modelMessages,
     tools,
     stopWhen: stepCountIs(5),
