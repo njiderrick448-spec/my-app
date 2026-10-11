@@ -9,6 +9,14 @@
         "/^grep -nE '\\^\\(export default function HomePage\\|export default function LoginPage\\|export function LoginScreen\\|export function PhoneFrame\\|export function AppShell\\|export function AppBottomNav\\)\\|navigation\\\\\\.map\\|const navigation =\\|const inputClassName\\|const primaryButtonClassName\\|LoginScreen\\|<main className\\|<header className' app/page\\.tsx app/Login/page\\.tsx src/app/auth-screens\\.tsx src/app/onboarding/page\\.tsx src/components/app-shell\\.tsx src/components/app-navigation\\.tsx; for f in src/app/focus-home/page\\.tsx src/app/tasks/page\\.tsx src/app/tasks-inbox/page\\.tsx src/app/task-creation/page\\.tsx src/app/profile/page\\.tsx src/app/goals-milestones/page\\.tsx src/app/habits-tracker/page\\.tsx src/app/notifications-settings/page\\.tsx src/app/settings/page\\.tsx src/app/home-dashboard/page\\.tsx src/app/home-dashboard-evening/page\\.tsx; do printf '%s: ' \"\\$f\"; head -n 1 \"\\$f\"; done$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^node -e 'const fs=require\\(\"fs\"\\); const p=\"\\.env\\.local\"; if\\(!fs\\.existsSync\\(p\\)\\)\\{console\\.log\\(\"\\.env\\.local: missing\"\\);process\\.exit\\(0\\)\\} const lines=fs\\.readFileSync\\(p,\"utf8\"\\)\\.split\\(/\\\\r\\?\\\\n/\\); const env=\\{\\}; for\\(const line of lines\\)\\{const m=line\\.match\\(/\\^\\\\s\\*\\(\\?:export\\\\s\\+\\)\\?\\(\\[A-Za-z_\\]\\[A-Za-z0-9_\\]\\*\\)\\\\s\\*=\\\\s\\*\\(\\.\\*\\)\\\\s\\*\\$/\\);if\\(m\\)env\\[m\\[1\\]\\]=m\\[2\\]\\.replace\\(/\\^\\(\\[\"'\"'\\]\\)\\(\\.\\*\\)\\\\1\\$/,\"\\$2\"\\)\\} for\\(const k of \\[\"NEXT_PUBLIC_SUPABASE_URL\",\"NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY\",\"NEXT_PUBLIC_SUPABASE_ANON_KEY\"\\]\\)\\{const v=env\\[k\\];console\\.log\\(`\\$\\{k\\}: \\$\\{v\\?\"set\":\"MISSING\"\\}\\$\\{k\\.endsWith\\(\"URL\"\\)&&v\\?` \\(valid URL: \\$\\{/\\^https:\\\\/\\\\/\\[a-z0-9-\\]\\+\\\\\\.supabase\\\\\\.co\\\\/\\?\\$/i\\.test\\(v\\)\\}\\)`:\"\"\\}`\\)\\}'$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^awk -F= '/\\^\\[\\[:space:\\]\\]\\*\\(export\\[\\[:space:\\]\\]\\+\\)\\?NEXT_PUBLIC_SUPABASE_\\(URL\\|PUBLISHABLE_KEY\\|ANON_KEY\\)\\[\\[:space:\\]\\]\\*=/\\{key=\\$1; gsub\\(/\\[\\[:space:\\]\\]/, \"\", key\\); sub\\(/\\^export/, \"\", key\\); val=substr\\(\\$0, index\\(\\$0, \"=\"\\)\\+1\\); print key \"=\" \\(length\\(val\\)>0 \\? \"set\" : \"empty\"\\)\\}' \\.env\\.local$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }
