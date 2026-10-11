@@ -3,14 +3,31 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PhoneFrame } from "@/src/app/onboarding/page";
 import { createClient } from "@/src/lib/supabase/client";
 
-const inputClassName = "w-full rounded-lg border border-white/5 bg-[#110d28] px-3 py-2.5 text-[10px] text-white/80 outline-none placeholder:text-white/25";
-const primaryButtonClassName = "w-full rounded-lg bg-gradient-to-r from-[#4940ec] to-[#8c4eed] py-3 text-[10px] font-bold shadow-[0_7px_18px_rgba(100,71,238,0.3)]";
+const inputClassName = "w-full rounded-lg border border-[#dbe4ef] bg-white px-3.5 py-3 text-sm text-[#10233f] outline-none placeholder:text-[#9aa9ba] transition focus:border-[#5b9bea] focus:ring-4 focus:ring-[#5b9bea]/15";
+const primaryButtonClassName = "w-full rounded-lg bg-[#155fcf] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(21,95,207,0.18)] transition hover:bg-[#0d4fac] focus:outline-none focus:ring-4 focus:ring-[#5b9bea]/30";
+const labelClassName = "block text-xs font-semibold text-[#243b5a]";
+
+function AuthFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#f5f8fc] px-4 py-10 text-[#10233f]">
+      <div className="w-full max-w-[440px]">
+        <Link href="/" className="mx-auto flex w-fit items-center gap-3" aria-label="Zenvyx home">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#155fcf] text-lg font-bold text-white shadow-[0_8px_20px_rgba(21,95,207,0.2)]">Z</span>
+          <span className="text-xl font-semibold tracking-tight">Zenvyx</span>
+        </Link>
+        <section className="mt-7 rounded-2xl border border-[#dbe4ef] bg-white p-6 shadow-[0_18px_50px_rgba(16,35,63,0.08)] sm:p-9">
+          {children}
+        </section>
+        <p className="mt-6 text-center text-xs text-[#7b8da5]">A clearer view of what deserves your attention.</p>
+      </div>
+    </main>
+  );
+}
 
 function SocialButtons({ onUnavailable }: { onUnavailable: () => void }) {
-  return <><div className="my-4 flex items-center gap-2 text-[7px] text-white/25"><span className="h-px flex-1 bg-white/5" />OR CONTINUE WITH<span className="h-px flex-1 bg-white/5" /></div><div className="flex gap-2"><button type="button" onClick={onUnavailable} className="flex-1 rounded-lg border border-white/5 bg-[#0d0924] py-2 text-[9px] text-white/70">◉ Google</button><button type="button" onClick={onUnavailable} className="flex-1 rounded-lg border border-white/5 bg-[#0d0924] py-2 text-[9px] text-white/70">◯ Apple</button></div></>;
+  return <><div className="my-5 flex items-center gap-3 text-[10px] font-medium tracking-wide text-[#9aa9ba]"><span className="h-px flex-1 bg-[#e7edf4]" />OR CONTINUE WITH<span className="h-px flex-1 bg-[#e7edf4]" /></div><div className="flex gap-3"><button type="button" onClick={onUnavailable} className="flex-1 rounded-lg border border-[#dbe4ef] bg-white py-2.5 text-xs font-medium text-[#405773] transition hover:bg-[#f5f8fc]">◉ Google</button><button type="button" onClick={onUnavailable} className="flex-1 rounded-lg border border-[#dbe4ef] bg-white py-2.5 text-xs font-medium text-[#405773] transition hover:bg-[#f5f8fc]">◯ Apple</button></div></>;
 }
 
 export function CreateAccountScreen() {
@@ -38,7 +55,7 @@ export function CreateAccountScreen() {
     if (error) { setMessage(error.message); return; }
     router.push(data.session ? "/home-dashboard" : "/email-verification");
   }
-  return <PhoneFrame><div className="relative flex min-h-[555px] flex-col justify-end pb-10"><div className="mb-5"><h2 className="text-[18px] font-extrabold">Create your account</h2><p className="mt-1 text-[10px] text-white/45">Start designing your focus OS today.</p></div><form onSubmit={submit} className="space-y-3"><label className="block text-[8px] font-bold uppercase text-white/50">Full name<input name="name" required className={`${inputClassName} mt-1`} placeholder="Alex Rivers" /></label><label className="block text-[8px] font-bold uppercase text-white/50">Email address<input name="email" required type="email" className={`${inputClassName} mt-1`} placeholder="alex@nexus.ai" /></label><label className="block text-[8px] font-bold uppercase text-white/50">Password<input name="password" required minLength={8} className={`${inputClassName} mt-1`} type="password" placeholder="At least 8 characters" /></label><button disabled={isSubmitting} type="submit" className={`${primaryButtonClassName} mt-1 disabled:cursor-not-allowed disabled:opacity-60`}>{isSubmitting ? "Creating account..." : "Create Account"}</button></form><SocialButtons onUnavailable={() => setMessage("Social sign-in needs a provider configuration before it can be enabled.")} /><p className="mt-3 min-h-5 text-center text-[8px] text-[#ffb246]">{message}</p><p className="mt-3 text-center text-[9px] text-white/45">Already have an account? <Link href="/Login" className="text-[#00c7e5]">Log in</Link></p></div></PhoneFrame>;
+  return <AuthFrame><div><h1 className="text-2xl font-semibold tracking-tight">Create your account</h1><p className="mt-2 text-sm text-[#60738c]">Start building a clearer, more focused day.</p></div><form onSubmit={submit} className="mt-7 space-y-4"><label className={labelClassName}>Full name<input name="name" required className={`${inputClassName} mt-2`} placeholder="Alex Rivers" autoComplete="name" /></label><label className={labelClassName}>Email address<input name="email" required type="email" className={`${inputClassName} mt-2`} placeholder="alex@example.com" autoComplete="email" /></label><label className={labelClassName}>Password<input name="password" required minLength={8} className={`${inputClassName} mt-2`} type="password" placeholder="At least 8 characters" autoComplete="new-password" /></label><button disabled={isSubmitting} type="submit" className={`${primaryButtonClassName} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}>{isSubmitting ? "Creating account..." : "Create account"}</button></form><SocialButtons onUnavailable={() => setMessage("Social sign-in needs a provider configuration before it can be enabled.")} /><p role="status" className="mt-3 min-h-5 text-center text-xs text-[#c0392b]">{message}</p><p className="mt-4 text-center text-sm text-[#60738c]">Already have an account? <Link href="/Login" className="font-semibold text-[#1664d8] hover:text-[#0d4fac]">Log in</Link></p></AuthFrame>;
 }
 
 export function LoginScreen() {
@@ -58,7 +75,7 @@ export function LoginScreen() {
     if (error) { setMessage(error.message); return; }
     router.push("/home-dashboard");
   }
-  return <PhoneFrame><div className="relative flex min-h-[555px] flex-col justify-end pb-10"><div className="mb-5"><h2 className="text-[18px] font-extrabold">Welcome back</h2><p className="mt-1 text-[10px] text-white/45">Connect to your personal intelligence ecosystem.</p></div><form onSubmit={submit} className="space-y-3"><label className="block text-[8px] font-bold uppercase text-white/50">Email address<input name="email" required type="email" className={`${inputClassName} mt-1`} placeholder="alex@nexus.ai" /></label><label className="block text-[8px] font-bold uppercase text-white/50">Password<input name="password" required className={`${inputClassName} mt-1`} placeholder="••••••••" type="password" /></label><Link href="/forgot-password" className="block text-right text-[8px] font-semibold text-[#9b60ff]">Forgot Password?</Link><button disabled={isSubmitting} type="submit" className={`${primaryButtonClassName} disabled:cursor-not-allowed disabled:opacity-60`}>{isSubmitting ? "Signing in..." : "Log In"}</button></form><SocialButtons onUnavailable={() => setMessage("Social sign-in needs a provider configuration before it can be enabled.")} /><p className="mt-3 min-h-5 text-center text-[8px] text-[#ffb246]">{message}</p><p className="mt-3 text-center text-[9px] text-white/45">Don&apos;t have an account? <Link href="/create-account" className="text-[#00c7e5]">Sign Up</Link></p></div></PhoneFrame>;
+  return <AuthFrame><div><h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1><p className="mt-2 text-sm text-[#60738c]">Sign in to pick up where you left off.</p></div><form onSubmit={submit} className="mt-7 space-y-4"><label className={labelClassName}>Email address<input name="email" required type="email" className={`${inputClassName} mt-2`} placeholder="you@example.com" autoComplete="email" /></label><label className={labelClassName}>Password<input name="password" required className={`${inputClassName} mt-2`} placeholder="Enter your password" type="password" autoComplete="current-password" /></label><Link href="/forgot-password" className="block text-right text-xs font-semibold text-[#1664d8] hover:text-[#0d4fac]">Forgot password?</Link><button disabled={isSubmitting} type="submit" className={`${primaryButtonClassName} disabled:cursor-not-allowed disabled:opacity-60`}>{isSubmitting ? "Signing in..." : "Log in"}</button></form><SocialButtons onUnavailable={() => setMessage("Social sign-in needs a provider configuration before it can be enabled.")} /><p role="status" className="mt-3 min-h-5 text-center text-xs text-[#c0392b]">{message}</p><p className="mt-4 text-center text-sm text-[#60738c]">Don&apos;t have an account? <Link href="/create-account" className="font-semibold text-[#1664d8] hover:text-[#0d4fac]">Sign up</Link></p></AuthFrame>;
 }
 
 export function ForgotPasswordScreen() {
@@ -78,5 +95,5 @@ export function ForgotPasswordScreen() {
     if (error) { setMessage(error.message); return; }
     setSent(true);
   }
-  return <PhoneFrame><div className="relative flex min-h-[555px] flex-col justify-end pb-10"><Link href="/Login" className="mb-7 text-[9px] text-white/75">← &nbsp;Back to Log In</Link><div className="mb-5"><h2 className="text-[18px] font-extrabold">Reset Password</h2><p className="mt-3 text-[9px] leading-[1.5] text-white/50">Enter the email address associated with your account. We will send you a verification link to reset your security credentials.</p></div><form onSubmit={submit}><label className="block text-[8px] font-bold uppercase text-white/50">Email address<input name="email" required type="email" className={`${inputClassName} mt-1`} placeholder="alex@nexus.ai" /></label><button disabled={isSubmitting} type="submit" className={`${primaryButtonClassName} mt-4 disabled:cursor-not-allowed disabled:opacity-60`}>{isSubmitting ? "Sending..." : sent ? "Reset Link Sent" : "Send Reset Link"}</button></form><p className="mt-4 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-[8px] leading-[1.4] text-white/45"><span className="mr-2 text-[#00c7e5]">ⓘ</span>{message || (sent ? "Check your inbox for the password reset link." : "Please check your spam or junk folder if you don&apos;t receive the email within 2 minutes.")}</p></div></PhoneFrame>;
+  return <AuthFrame><Link href="/Login" className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-[#1664d8] hover:text-[#0d4fac]">← Back to log in</Link><div><h1 className="text-2xl font-semibold tracking-tight">Reset your password</h1><p className="mt-2 text-sm leading-6 text-[#60738c]">Enter the email address associated with your account and we&apos;ll send you a reset link.</p></div><form onSubmit={submit} className="mt-7"><label className={labelClassName}>Email address<input name="email" required type="email" className={`${inputClassName} mt-2`} placeholder="you@example.com" autoComplete="email" /></label><button disabled={isSubmitting} type="submit" className={`${primaryButtonClassName} mt-5 disabled:cursor-not-allowed disabled:opacity-60`}>{isSubmitting ? "Sending..." : sent ? "Reset link sent" : "Send reset link"}</button></form><p role="status" className="mt-4 rounded-lg border border-[#dbe4ef] bg-[#f5f8fc] px-3 py-3 text-xs leading-5 text-[#60738c]"><span className="mr-2 text-[#1664d8]" aria-hidden="true">ⓘ</span>{message || (sent ? "Check your inbox for the password reset link." : "If you don&apos;t receive the email within a few minutes, check your spam folder.")}</p></AuthFrame>;
 }

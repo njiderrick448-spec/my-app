@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavIcon, type NavIconName } from "@/src/components/nav-icon";
 
 const agendaItems = [
   { title: "Review product specs", detail: "09:30 AM - Work", done: true },
@@ -25,14 +26,14 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
         <p className="mt-12 text-[10px] font-bold uppercase tracking-[0.2em] text-white/35">Workspace</p>
         <nav className="mt-4 space-y-1" aria-label="Workspace navigation">
           {[
-            ["⌂", "Home", "/home-dashboard"],
-            ["≡", "Tasks", "/tasks-inbox"],
-            ["◷", "Focus", "/focus-home"],
-            ["✣", "AI", "/ai-chat"],
-            ["♙", "Profile", "/profile"],
+            ["home", "Home", "/home-dashboard"],
+            ["tasks", "Tasks", "/tasks-inbox"],
+            ["focus", "Focus", "/focus-home"],
+            ["ai", "AI", "/ai-chat"],
+            ["profile", "Profile", "/profile"],
           ].map(([icon, label, href]) => (
             <Link key={label} href={href} className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-white/55 transition hover:bg-white/5 hover:text-white">
-              <span className="w-5 text-center text-base text-[#00c7e5]">{icon}</span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center text-[#00c7e5]"><NavIcon name={icon as NavIconName} /></span>
               {label}
             </Link>
           ))}

@@ -5,6 +5,10 @@
             "matchCommandLine": true
         },
         "npm install": true,
-        "mv": true
+        "mv": true,
+        "/^grep -nE '\\^\\(export default function HomePage\\|export default function LoginPage\\|export function LoginScreen\\|export function PhoneFrame\\|export function AppShell\\|export function AppBottomNav\\)\\|navigation\\\\\\.map\\|const navigation =\\|const inputClassName\\|const primaryButtonClassName\\|LoginScreen\\|<main className\\|<header className' app/page\\.tsx app/Login/page\\.tsx src/app/auth-screens\\.tsx src/app/onboarding/page\\.tsx src/components/app-shell\\.tsx src/components/app-navigation\\.tsx; for f in src/app/focus-home/page\\.tsx src/app/tasks/page\\.tsx src/app/tasks-inbox/page\\.tsx src/app/task-creation/page\\.tsx src/app/profile/page\\.tsx src/app/goals-milestones/page\\.tsx src/app/habits-tracker/page\\.tsx src/app/notifications-settings/page\\.tsx src/app/settings/page\\.tsx src/app/home-dashboard/page\\.tsx src/app/home-dashboard-evening/page\\.tsx; do printf '%s: ' \"\\$f\"; head -n 1 \"\\$f\"; done$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }
